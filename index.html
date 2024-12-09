@@ -11,7 +11,8 @@
                 extend: {
                     colors: {
                         primary: '#1B3D33',
-                        accent: '#6BBF59',
+                        accent: '#10b981',
+                        'accent-dark': '#059669',
                     },
                     fontFamily: {
                         'sans': ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -28,22 +29,96 @@
 <body class="font-sans">
     
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
+    <header x-data="{ 
+        atTop: true,
+        lastScrollPosition: 0,
+        isVisible: true,
+        handleScroll() {
+            const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Check if we're at the top
+            this.atTop = currentScrollPosition < 10;
+            
+            // Determine scroll direction and visibility
+            if (currentScrollPosition < this.lastScrollPosition) {
+                // Scrolling up
+                this.isVisible = true;
+            } else if (currentScrollPosition > this.lastScrollPosition) {
+                // Scrolling down
+                this.isVisible = false;
+            }
+            
+            this.lastScrollPosition = currentScrollPosition;
+        }
+    }" 
+        @scroll.window="handleScroll"
+        class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+        :class="{
+            'bg-transparent': atTop,
+            'bg-white shadow-md': !atTop && isVisible,
+            '-translate-y-full': !isVisible && !atTop
+        }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo -->
                 <div class="flex items-center">
-                    <span class="text-2xl font-bold text-primary">FraktValg</span>
+                    <a href="#" class="h-8">
+                        <img src="https://wordpress-1207816-4888268.cloudwaysapps.com/wp-content/uploads/2023/09/Asset-1.svg" 
+                             alt="FraktValg" 
+                             class="h-full w-auto transition-all duration-300"
+                             :class="{ 'brightness-0 invert': atTop, 'brightness-100': !atTop }">
+                    </a>
                 </div>
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-gray-700 hover:text-accent">Funksjoner</a>
-                    <a href="#pricing" class="text-gray-700 hover:text-accent">Priser</a>
-                    <a href="#testimonials" class="text-gray-700 hover:text-accent">Kundeomtaler</a>
-                    <a href="#contact" class="text-gray-700 hover:text-accent">Kontakt</a>
-                    <a href="#" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90">Kom i gang</a>
+
+                <!-- Navigation -->
+                <nav class="hidden md:flex items-center space-x-10">
+                    <a href="#features" class="font-medium transition-colors duration-200" 
+                       :class="{ 'text-white/90 hover:text-white': atTop, 'text-gray-600 hover:text-primary': !atTop }">
+                        Funksjoner
+                    </a>
+                    <a href="#integrations" class="font-medium transition-colors duration-200" 
+                       :class="{ 'text-white/90 hover:text-white': atTop, 'text-gray-600 hover:text-primary': !atTop }">
+                        Integrasjoner
+                    </a>
+                    <a href="#pricing" class="font-medium transition-colors duration-200" 
+                       :class="{ 'text-white/90 hover:text-white': atTop, 'text-gray-600 hover:text-primary': !atTop }">
+                        Priser
+                    </a>
+                    <a href="#support" class="font-medium transition-colors duration-200" 
+                       :class="{ 'text-white/90 hover:text-white': atTop, 'text-gray-600 hover:text-primary': !atTop }">
+                        Kundesenter
+                    </a>
+                </nav>
+
+                <!-- CTA Button -->
+                <div class="flex items-center space-x-4">
+                    <a href="#" 
+                       class="inline-flex items-center px-5 py-2.5 font-medium rounded-lg text-white bg-accent hover:bg-accent-dark transition-all duration-300">
+                        <i class="lni lni-thunder text-lg mr-2"></i>
+                        Prøv gratis i 14 dager
+                    </a>
                 </div>
             </div>
         </div>
-    </nav>
+
+        <style>
+            @keyframes gradient-x {
+                0% {
+                    background-position: 0% 50%;
+                }
+                50% {
+                    background-position: 100% 50%;
+                }
+                100% {
+                    background-position: 0% 50%;
+                }
+            }
+            .animate-gradient-x {
+                background-size: 200% 100%;
+                animation: gradient-x 3s ease infinite;
+            }
+        </style>
+    </header>
 
     <!-- Hero Section -->
     <section class="bg-gradient-to-br from-primary to-primary/90 text-white relative overflow-hidden min-h-screen flex items-center">
@@ -90,246 +165,238 @@
                     <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
                         <div class="mb-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-gray-800 font-semibold">Velg frakt</h3>
+                                <h3 class="text-gray-800 font-semibold">FraktValg demo</h3>
                                 <div class="flex items-center text-sm text-gray-500">
                                     <i class="lni lni-shield mr-2 text-accent"></i>
                                     <span>Sikker betaling</span>
                                 </div>
                             </div>
-                            
-                            <!-- Shipping Options -->
-                            <div x-data="{ 
-                                step: 'carriers',
-                                selectedCarrier: null,
-                                showSuccess: false,
-                                currentStep: 0,
-                                showFinal: false,
-                                selectDelivery() {
-                                    this.showSuccess = true;
-                                    this.animateSteps();
-                                },
-                                animateSteps() {
-                                    const steps = [0, 1, 2, 3];
-                                    let delay = 0;
-                                    steps.forEach((step, index) => {
-                                        setTimeout(() => {
-                                            this.currentStep = step;
-                                        }, delay);
-                                        delay += 1000;
-                                    });
+                        </div>
+
+                        <!-- Shipping Options -->
+                        <div x-data="{ 
+                            step: 'carriers',
+                            selectedCarrier: null,
+                            showSuccess: false,
+                            currentStep: 0,
+                            showFinal: false,
+                            selectDelivery() {
+                                this.showSuccess = true;
+                                this.animateSteps();
+                            },
+                            animateSteps() {
+                                const steps = [0, 1, 2, 3];
+                                let delay = 0;
+                                steps.forEach((step, index) => {
                                     setTimeout(() => {
-                                        this.showFinal = true;
-                                    }, 4000);
-                                },
-                                resetDemo() {
-                                    this.showSuccess = false;
-                                    this.showFinal = false;
-                                    this.step = 'carriers';
-                                    this.selectedCarrier = null;
-                                    this.currentStep = 0;
-                                }
-                            }" class="relative h-[320px]">
-                                <!-- Success Message -->
-                                <div x-show="showSuccess"
-                                     x-transition:enter="transition ease-out duration-500"
-                                     x-transition:enter-start="opacity-0"
-                                     x-transition:enter-end="opacity-100"
-                                     class="absolute inset-0 flex items-center justify-center bg-white rounded-xl z-10">
-                                    <div class="text-center px-4">
-                                        <!-- Process Steps -->
-                                        <div x-show="!showFinal">
-                                            <!-- Step 1: Order Created -->
-                                            <div x-show="currentStep >= 0"
-                                                 x-transition:enter="transition ease-out duration-300"
-                                                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                                                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                                                 class="flex items-center space-x-3 mb-3">
-                                                <i class="lni lni-shopping-basket text-2xl text-accent"></i>
-                                                <span class="text-gray-800">Ordre opprettes i WooCommerce</span>
-                                            </div>
-
-                                            <!-- Step 2: Order Confirmation -->
-                                            <div x-show="currentStep >= 1"
-                                                 x-transition:enter="transition ease-out duration-300"
-                                                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                                                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                                                 class="flex items-center space-x-3 mb-3">
-                                                <i class="lni lni-envelope text-2xl text-accent"></i>
-                                                <span class="text-gray-800">Ordrebekreftelse blir sendt</span>
-                                            </div>
-
-                                            <!-- Step 3: Label Printed -->
-                                            <div x-show="currentStep >= 2"
-                                                 x-transition:enter="transition ease-out duration-300"
-                                                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                                                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                                                 class="flex items-center space-x-3 mb-3">
-                                                <i class="lni lni-printer text-2xl text-accent"></i>
-                                                <span class="text-gray-800">Etikett printes ut</span>
-                                            </div>
-
-                                            <!-- Step 4: Package Shipped -->
-                                            <div x-show="currentStep >= 3"
-                                                 x-transition:enter="transition ease-out duration-300"
-                                                 x-transition:enter-start="opacity-0 transform translate-y-4"
-                                                 x-transition:enter-end="opacity-100 transform translate-y-0"
-                                                 class="flex items-center space-x-3">
-                                                <i class="lni lni-delivery text-2xl text-accent"></i>
-                                                <span class="text-gray-800">Pakken er på vei til deg</span>
-                                            </div>
+                                        this.currentStep = step;
+                                    }, delay);
+                                    delay += 1000;
+                                });
+                                setTimeout(() => {
+                                    this.showFinal = true;
+                                }, 4000);
+                            },
+                            resetDemo() {
+                                this.showSuccess = false;
+                                this.showFinal = false;
+                                this.step = 'carriers';
+                                this.selectedCarrier = null;
+                                this.currentStep = 0;
+                            }
+                        }" class="relative h-[380px]">
+                            <!-- Success Message -->
+                            <div x-show="showSuccess"
+                                 x-transition:enter="transition ease-out duration-500"
+                                 x-transition:enter-start="opacity-0"
+                                 x-transition:enter-end="opacity-100"
+                                 class="absolute inset-0 flex items-center justify-center bg-white rounded-xl z-10 p-8">
+                                <div class="text-center px-4">
+                                    <!-- Process Steps -->
+                                    <div x-show="!showFinal">
+                                        <!-- Step 1: Order Created -->
+                                        <div x-show="currentStep >= 0"
+                                             x-transition:enter="transition ease-out duration-300"
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3 mb-3">
+                                            <i class="lni lni-shopping-basket text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Ordre opprettes i WooCommerce</span>
                                         </div>
 
-                                        <!-- Final Step -->
-                                        <div x-show="showFinal"
+                                        <!-- Step 2: Order Confirmation -->
+                                        <div x-show="currentStep >= 1"
                                              x-transition:enter="transition ease-out duration-300"
-                                             x-transition:enter-start="opacity-0 scale-95"
-                                             x-transition:enter-end="opacity-100 scale-100"
-                                             class="text-center">
-                                            <button @click="resetDemo" 
-                                                    class="inline-flex items-center px-6 py-3 bg-accent text-white rounded-lg shadow-lg hover:bg-accent-dark transition-colors duration-200 mb-3 group">
-                                                <i class="lni lni-play mr-2 transform transition-transform duration-200 group-hover:scale-110"></i>
-                                                Prøv FraktValg Gratis
-                                            </button>
-                                            <div>
-                                                <button @click="resetDemo" 
-                                                        class="text-sm text-gray-600 hover:text-accent transition-colors duration-200">
-                                                    Prøv demo på nytt
-                                                </button>
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3 mb-3">
+                                            <i class="lni lni-envelope text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Ordrebekreftelse blir sendt</span>
+                                        </div>
+
+                                        <!-- Step 3: Label Printed -->
+                                        <div x-show="currentStep >= 2"
+                                             x-transition:enter="transition ease-out duration-300"
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3 mb-3">
+                                            <i class="lni lni-printer text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Etikett printes ut</span>
+                                        </div>
+
+                                        <!-- Step 4: Package Shipped -->
+                                        <div x-show="currentStep >= 3"
+                                             x-transition:enter="transition ease-out duration-300"
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3">
+                                            <i class="lni lni-delivery text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Pakken er på vei til deg</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Final Step -->
+                                    <div x-show="showFinal"
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         class="text-center">
+                                        <!-- User Testimonial Card -->
+                                        <div class="mb-6 bg-white rounded-lg p-5 shadow-sm border border-gray-100">
+                                            <div class="flex items-center mb-4">
+                                                <div class="w-14 h-14 mr-4 overflow-hidden rounded-full ring-2 ring-accent/20">
+                                                    <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=120&h=120&q=80" 
+                                                         alt="Hanne - Nettbutikkeier" 
+                                                         class="w-full h-full object-cover">
+                                                </div>
+                                                <div class="text-left">
+                                                    <h4 class="font-medium text-gray-900 text-lg">Hanne Nordmann</h4>
+                                                    <p class="text-sm text-gray-600">Eier av BabyButikken.no</p>
+                                                </div>
                                             </div>
+                                            <div class="space-y-3 text-left">
+                                                <p class="text-gray-700 leading-relaxed">
+                                                    "FraktValg automatiserer alt. Kundene er fornøyde, og jeg sparer masse tid!"
+                                                </p>
+                                                <div class="flex items-center text-sm text-accent space-x-2">
+                                                    <i class="lni lni-timer text-lg"></i>
+                                                    <span>Vi har spart 10 timer i uken</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <button @click="resetDemo" 
+                                                class="w-full px-6 py-4 bg-accent text-white rounded-lg shadow-lg hover:bg-accent-dark transition-all duration-200 mb-3 transform hover:scale-[1.02] font-medium text-lg">
+                                            Få samme løsning som Hanne
+                                        </button>
+                                        <div>
+                                            <button @click="resetDemo" 
+                                                    class="text-sm text-gray-600 hover:text-accent transition-colors duration-200">
+                                                Se demo på nytt
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Carriers List -->
-                                <div x-show="step === 'carriers'"
-                                     x-transition:enter="transition-all duration-300 ease-out"
-                                     x-transition:enter-start="opacity-0 transform translate-x-8"
-                                     x-transition:enter-end="opacity-100 transform translate-x-0"
-                                     class="space-y-3">
-                                    
-                                    <div class="mb-4 inline-flex items-center text-sm text-gray-600">
-                                        <i class="lni lni-delivery mr-2"></i>
-                                        Velg ønsket transportør
-                                    </div>
+                            <!-- Carriers List -->
+                            <div x-show="step === 'carriers'"
+                                 x-transition:enter="transition-all duration-300 ease-out"
+                                 x-transition:enter-start="opacity-0 transform translate-x-8"
+                                 x-transition:enter-end="opacity-100 transform translate-x-0"
+                                 class="space-y-3">
+                                
+                                <div class="mb-4 inline-flex items-center text-sm text-gray-600">
+                                    <i class="lni lni-delivery mr-2"></i>
+                                    Velg ønsket transportør
+                                </div>
 
-                                    <div @click="step = 'locations'; selectedCarrier = 'posten'" 
-                                         class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
-                                        <div class="flex items-center flex-1">
-                                            <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
-                                                <img src="https://www.posten.no/favicon.ico" alt="Posten" class="w-full h-full object-contain">
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex justify-between">
+                                <div @click="step = 'locations'; selectedCarrier = 'posten'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
+                                            <img src="https://www.posten.no/favicon.ico" alt="Posten" class="w-full h-full object-contain">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
                                                     <span class="font-medium text-gray-800">Posten til postkasse</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-timer mr-2"></i>
+                                                        2-4 virkedager
+                                                    </div>
+                                                </div>
+                                                <div class="text-center min-w-[80px] flex items-center">
                                                     <span class="font-medium text-gray-800">Fra 49 kr</span>
                                                 </div>
-                                                <div class="flex items-center text-sm text-gray-500">
-                                                    <i class="lni lni-timer mr-2"></i>
-                                                    2-4 virkedager
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    
-                                    <div @click="step = 'locations'; selectedCarrier = 'helthjem'" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
-                                        <div class="flex items-center flex-1">
-                                            <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
-                                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLh9qQOSDlqyc4lTLyDyFMIvb-TT4vS2W-UQ&s" alt="Helt Hjem" class="w-full h-full object-contain">
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex justify-between">
-                                                    <span class="font-medium text-gray-800">Hjemlevering</span>
-                                                    <span class="font-medium text-gray-800">Fra 99 kr</span>
-                                                </div>
-                                                <div class="flex items-center text-sm text-gray-500">
-                                                    <i class="lni lni-home mr-2"></i>
-                                                    Levering på døren
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
 
-                                    <div @click="step = 'locations'; selectedCarrier = 'postnord'" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
-                                        <div class="flex items-center flex-1">
-                                            <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
-                                                <img src="https://www.postnord.no/favicon.ico" alt="PostNord" class="w-full h-full object-contain">
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex justify-between">
-                                                    <span class="font-medium text-gray-800">PostNord hentested</span>
-                                                    <span class="font-medium text-gray-800">Fra 65 kr</span>
+                                <div @click="step = 'locations'; selectedCarrier = 'bring'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
+                                            <img src="https://avatars.githubusercontent.com/u/238156?s=280&v=4" alt="Bring" class="w-full h-full object-contain">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Bring Bedriftspakke</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-package mr-2"></i>
+                                                        Levering til bedrift
+                                                    </div>
                                                 </div>
-                                                <div class="flex items-center text-sm text-gray-500">
-                                                    <i class="lni lni-map-marker mr-2"></i>
-                                                    Hent når det passer deg
+                                                <div class="text-center min-w-[80px] flex items-center">
+                                                    <span class="font-medium text-gray-800">Fra 79 kr</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- Delivery Locations -->
-                                <div x-show="step === 'locations' && !showSuccess"
-                                     x-transition:enter="transition-all duration-300 ease-out"
-                                     x-transition:enter-start="opacity-0 transform translate-x-8"
-                                     x-transition:enter-end="opacity-100 transform translate-x-0"
-                                     class="space-y-3">
-                                    
-                                    <div @click="step = 'carriers'; selectedCarrier = null" 
-                                         class="mb-4 inline-flex items-center text-sm text-gray-600 cursor-pointer hover:text-accent transition-colors">
-                                        <i class="lni lni-arrow-left mr-2"></i>
-                                        Tilbake til fraktmetoder
-                                    </div>
-
-                                    <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
-                                        <div class="flex items-center flex-1">
-                                            <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
-                                                <i class="lni lni-home text-accent text-2xl"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex justify-between">
-                                                    <span class="font-medium text-gray-800">Pakke levert på døren</span>
-                                                    <span class="font-medium text-gray-800">89 kr</span>
+                                <div @click="step = 'locations'; selectedCarrier = 'helthjem'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
+                                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLh9qQOSDlqyc4lTLyDyFMIvb-TT4vS2W-UQ&s" alt="Helt Hjem" class="w-full h-full object-contain">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">HeltHjem</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-home mr-2"></i>
+                                                        Levering på døren
+                                                    </div>
                                                 </div>
-                                                <div class="flex items-center text-sm text-gray-500">
-                                                    <i class="lni lni-timer mr-2"></i>
-                                                    Levering i morgen
+                                                <div class="text-center min-w-[80px] flex items-center">
+                                                    <span class="font-medium text-gray-800">Fra 99 kr</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
-                                        <div class="flex items-center flex-1">
-                                            <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
-                                                <i class="lni lni-shopping-basket text-accent text-2xl"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex justify-between">
-                                                    <span class="font-medium text-gray-800">Rema 1000 Tvedtsenteret</span>
-                                                    <span class="font-medium text-gray-800">65 kr</span>
-                                                </div>
-                                                <div class="flex items-center text-sm text-gray-500">
-                                                    <i class="lni lni-map-marker mr-2"></i>
-                                                    0.8 km unna
-                                                </div>
-                                            </div>
+                                <div @click="step = 'locations'; selectedCarrier = 'postnord'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
+                                            <img src="https://www.postnord.no/favicon.ico" alt="PostNord" class="w-full h-full object-contain">
                                         </div>
-                                    </div>
-
-                                    <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
-                                        <div class="flex items-center flex-1">
-                                            <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
-                                                <i class="lni lni-package text-accent text-2xl"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="flex justify-between">
-                                                    <span class="font-medium text-gray-800">Pakkeboks Kiwi Forus</span>
-                                                    <span class="font-medium text-gray-800">49 kr</span>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">PostNord hentested</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-map-marker mr-2"></i>
+                                                        Hent når det passer deg
+                                                    </div>
                                                 </div>
-                                                <div class="flex items-center text-sm text-gray-500">
-                                                    <i class="lni lni-map-marker mr-2"></i>
-                                                    1.2 km unna
+                                                <div class="text-center min-w-[80px] flex items-center">
+                                                    <span class="font-medium text-gray-800">Fra 65 kr</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -337,17 +404,91 @@
                                 </div>
                             </div>
 
-                            <!-- Features Pills -->
-                            <div class="flex flex-wrap gap-2 mt-4">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent/10 text-accent">
-                                    <i class="lni lni-delivery mr-1"></i> Rask levering
-                                </span>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                                    <i class="lni lni-map mr-1"></i> Velg hentested
-                                </span>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                    <i class="lni lni-timer mr-1"></i> Sporbar sending
-                                </span>
+                            <!-- Delivery Locations -->
+                            <div x-show="step === 'locations' && !showSuccess"
+                                 x-transition:enter="transition-all duration-300 ease-out"
+                                 x-transition:enter-start="opacity-0 transform translate-x-8"
+                                 x-transition:enter-end="opacity-100 transform translate-x-0"
+                                 class="space-y-3">
+                                
+                                <div @click="step = 'carriers'; selectedCarrier = null" 
+                                     class="mb-4 inline-flex items-center text-sm text-gray-600 cursor-pointer hover:text-accent transition-colors">
+                                    <i class="lni lni-arrow-left mr-2"></i>
+                                    Tilbake til fraktmetoder
+                                </div>
+
+                                <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
+                                            <i class="lni lni-home text-accent text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Pakke levert på døren</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-timer mr-2"></i>
+                                                        Levering i morgen
+                                                    </div>
+                                                </div>
+                                                <div class="text-right min-w-[80px] flex items-center justify-end">
+                                                    <span class="font-medium text-gray-800">89 kr</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
+                                            <i class="lni lni-shopping-basket text-accent text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Rema 1000 Tvedtsenteret</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-map-marker mr-2"></i>
+                                                        0.8 km unna
+                                                    </div>
+                                                </div>
+                                                <div class="text-right min-w-[80px] flex items-center justify-end">
+                                                    <span class="font-medium text-gray-800">65 kr</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
+                                            <i class="lni lni-package text-accent text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Pakkeboks Kiwi Forus</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-map-marker mr-2"></i>
+                                                        1.2 km unna
+                                                    </div>
+                                                </div>
+                                                <div class="text-right min-w-[80px] flex items-center justify-end">
+                                                    <span class="font-medium text-gray-800">49 kr</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-gray-100">
+                            <div class="flex items-center justify-between text-sm">
+                                <span class="text-gray-500">Velg ønsket leveringsmåte</span>
+                                <span class="text-accent font-medium">3 alternativer tilgjengelig</span>
                             </div>
                         </div>
                     </div>
@@ -558,66 +699,321 @@
                     <!-- Shipping Options Demo -->
                     <div class="bg-white shadow-xl rounded-2xl p-8 border border-gray-100">
                         <div class="mb-6">
-                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Slik ser det ut for kundene dine</h3>
-                            <p class="text-gray-600">Gi kundene valgfrihet med vårt moderne checkout-system</p>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-gray-800 font-semibold">FraktValg demo</h3>
+                                <div class="flex items-center text-sm text-gray-500">
+                                    <i class="lni lni-shield mr-2 text-accent"></i>
+                                    <span>Sikker betaling</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="space-y-4">
-                            <div class="p-4 border border-accent/20 rounded-xl bg-accent/5 cursor-pointer transition-all duration-300 hover:shadow-md">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-12 h-12 bg-white rounded-lg shadow-sm p-2">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Postens_logo.svg/2048px-Postens_logo.svg.png" alt="Posten" class="w-full h-full object-contain">
+                        <!-- Shipping Options -->
+                        <div x-data="{ 
+                            step: 'carriers',
+                            selectedCarrier: null,
+                            showSuccess: false,
+                            currentStep: 0,
+                            showFinal: false,
+                            selectDelivery() {
+                                this.showSuccess = true;
+                                this.animateSteps();
+                            },
+                            animateSteps() {
+                                const steps = [0, 1, 2, 3];
+                                let delay = 0;
+                                steps.forEach((step, index) => {
+                                    setTimeout(() => {
+                                        this.currentStep = step;
+                                    }, delay);
+                                    delay += 1000;
+                                });
+                                setTimeout(() => {
+                                    this.showFinal = true;
+                                }, 4000);
+                            },
+                            resetDemo() {
+                                this.showSuccess = false;
+                                this.showFinal = false;
+                                this.step = 'carriers';
+                                this.selectedCarrier = null;
+                                this.currentStep = 0;
+                            }
+                        }" class="relative h-[380px]">
+                            <!-- Success Message -->
+                            <div x-show="showSuccess"
+                                 x-transition:enter="transition ease-out duration-500"
+                                 x-transition:enter-start="opacity-0"
+                                 x-transition:enter-end="opacity-100"
+                                 class="absolute inset-0 flex items-center justify-center bg-white rounded-xl z-10 p-8">
+                                <div class="text-center px-4">
+                                    <!-- Process Steps -->
+                                    <div x-show="!showFinal">
+                                        <!-- Step 1: Order Created -->
+                                        <div x-show="currentStep >= 0"
+                                             x-transition:enter="transition ease-out duration-300"
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3 mb-3">
+                                            <i class="lni lni-shopping-basket text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Ordre opprettes i WooCommerce</span>
+                                        </div>
+
+                                        <!-- Step 2: Order Confirmation -->
+                                        <div x-show="currentStep >= 1"
+                                             x-transition:enter="transition ease-out duration-300"
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3 mb-3">
+                                            <i class="lni lni-envelope text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Ordrebekreftelse blir sendt</span>
+                                        </div>
+
+                                        <!-- Step 3: Label Printed -->
+                                        <div x-show="currentStep >= 2"
+                                             x-transition:enter="transition ease-out duration-300"
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3 mb-3">
+                                            <i class="lni lni-printer text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Etikett printes ut</span>
+                                        </div>
+
+                                        <!-- Step 4: Package Shipped -->
+                                        <div x-show="currentStep >= 3"
+                                             x-transition:enter="transition ease-out duration-300"
+                                             x-transition:enter-start="opacity-0 transform translate-y-4"
+                                             x-transition:enter-end="opacity-100 transform translate-y-0"
+                                             class="flex items-center space-x-3">
+                                            <i class="lni lni-delivery text-2xl text-accent"></i>
+                                            <span class="text-gray-800">Pakken er på vei til deg</span>
                                         </div>
                                     </div>
-                                    <div class="ml-4 flex-1">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="font-medium text-gray-900">Posten til postkasse</span>
-                                            <span class="font-medium text-accent">49 kr</span>
+
+                                    <!-- Final Step -->
+                                    <div x-show="showFinal"
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 scale-95"
+                                         x-transition:enter-end="opacity-100 scale-100"
+                                         class="text-center">
+                                        <!-- User Testimonial Card -->
+                                        <div class="mb-6 bg-white rounded-lg p-5 shadow-sm border border-gray-100">
+                                            <div class="flex items-center mb-4">
+                                                <div class="w-14 h-14 mr-4 overflow-hidden rounded-full ring-2 ring-accent/20">
+                                                    <img src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=120&h=120&q=80" 
+                                                         alt="Hanne - Nettbutikkeier" 
+                                                         class="w-full h-full object-cover">
+                                                </div>
+                                                <div class="text-left">
+                                                    <h4 class="font-medium text-gray-900 text-lg">Hanne Nordmann</h4>
+                                                    <p class="text-sm text-gray-600">Eier av BabyButikken.no</p>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-3 text-left">
+                                                <p class="text-gray-700 leading-relaxed">
+                                                    "FraktValg automatiserer alt. Kundene er fornøyde, og jeg sparer masse tid!"
+                                                </p>
+                                                <div class="flex items-center text-sm text-accent space-x-2">
+                                                    <i class="lni lni-timer text-lg"></i>
+                                                    <span>Vi har spart 10 timer i uken</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <i class="lni lni-timer mr-2"></i>
-                                            2-4 virkedager
+                                        
+                                        <button @click="resetDemo" 
+                                                class="w-full px-6 py-4 bg-accent text-white rounded-lg shadow-lg hover:bg-accent-dark transition-all duration-200 mb-3 transform hover:scale-[1.02] font-medium text-lg">
+                                            Få samme løsning som Hanne
+                                        </button>
+                                        <div>
+                                            <button @click="resetDemo" 
+                                                    class="text-sm text-gray-600 hover:text-accent transition-colors duration-200">
+                                                Se demo på nytt
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="p-4 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer transition-all duration-300">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-12 h-12 bg-white rounded-lg shadow-sm p-2">
+                            <!-- Carriers List -->
+                            <div x-show="step === 'carriers'"
+                                 x-transition:enter="transition-all duration-300 ease-out"
+                                 x-transition:enter-start="opacity-0 transform translate-x-8"
+                                 x-transition:enter-end="opacity-100 transform translate-x-0"
+                                 class="space-y-3">
+                                
+                                <div class="mb-4 inline-flex items-center text-sm text-gray-600">
+                                    <i class="lni lni-delivery mr-2"></i>
+                                    Velg ønsket transportør
+                                </div>
+
+                                <div @click="step = 'locations'; selectedCarrier = 'posten'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
+                                            <img src="https://www.posten.no/favicon.ico" alt="Posten" class="w-full h-full object-contain">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Posten til postkasse</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-timer mr-2"></i>
+                                                        2-4 virkedager
+                                                    </div>
+                                                </div>
+                                                <div class="text-center min-w-[80px] flex items-center">
+                                                    <span class="font-medium text-gray-800">Fra 49 kr</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div @click="step = 'locations'; selectedCarrier = 'bring'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
+                                            <img src="https://avatars.githubusercontent.com/u/238156?s=280&v=4" alt="Bring" class="w-full h-full object-contain">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Bring Bedriftspakke</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-package mr-2"></i>
+                                                        Levering til bedrift
+                                                    </div>
+                                                </div>
+                                                <div class="text-center min-w-[80px] flex items-center">
+                                                    <span class="font-medium text-gray-800">Fra 79 kr</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div @click="step = 'locations'; selectedCarrier = 'helthjem'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
                                             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQLh9qQOSDlqyc4lTLyDyFMIvb-TT4vS2W-UQ&s" alt="Helt Hjem" class="w-full h-full object-contain">
                                         </div>
-                                    </div>
-                                    <div class="ml-4 flex-1">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="font-medium text-gray-900">Helt Hjem levering</span>
-                                            <span class="font-medium text-gray-900">129 kr</span>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">HeltHjem</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-home mr-2"></i>
+                                                        Levering på døren
+                                                    </div>
+                                                </div>
+                                                <div class="text-center min-w-[80px] flex items-center">
+                                                    <span class="font-medium text-gray-800">Fra 99 kr</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <i class="lni lni-home mr-2"></i>
-                                            Levering på døren
+                                    </div>
+                                </div>
+
+                                <div @click="step = 'locations'; selectedCarrier = 'postnord'" 
+                                     class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0">
+                                            <img src="https://www.postnord.no/favicon.ico" alt="PostNord" class="w-full h-full object-contain">
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">PostNord hentested</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-map-marker mr-2"></i>
+                                                        Hent når det passer deg
+                                                    </div>
+                                                </div>
+                                                <div class="text-center min-w-[80px] flex items-center">
+                                                    <span class="font-medium text-gray-800">Fra 65 kr</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="p-4 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer transition-all duration-300">
-                                <div class="flex items-center">
-                                    <div class="flex-shrink-0">
-                                        <div class="w-12 h-12 bg-white rounded-lg shadow-sm p-2">
-                                            <img src="https://www.postnord.no/favicon.ico" alt="PostNord" class="w-full h-full object-contain">
+                            <!-- Delivery Locations -->
+                            <div x-show="step === 'locations' && !showSuccess"
+                                 x-transition:enter="transition-all duration-300 ease-out"
+                                 x-transition:enter-start="opacity-0 transform translate-x-8"
+                                 x-transition:enter-end="opacity-100 transform translate-x-0"
+                                 class="space-y-3">
+                                
+                                <div @click="step = 'carriers'; selectedCarrier = null" 
+                                     class="mb-4 inline-flex items-center text-sm text-gray-600 cursor-pointer hover:text-accent transition-colors">
+                                    <i class="lni lni-arrow-left mr-2"></i>
+                                    Tilbake til fraktmetoder
+                                </div>
+
+                                <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
+                                            <i class="lni lni-home text-accent text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Pakke levert på døren</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-timer mr-2"></i>
+                                                        Levering i morgen
+                                                    </div>
+                                                </div>
+                                                <div class="text-right min-w-[80px] flex items-center justify-end">
+                                                    <span class="font-medium text-gray-800">89 kr</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="ml-4 flex-1">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span class="font-medium text-gray-900">PostNord hentested</span>
-                                            <span class="font-medium text-gray-900">65 kr</span>
+                                </div>
+
+                                <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
+                                            <i class="lni lni-shopping-basket text-accent text-2xl"></i>
                                         </div>
-                                        <div class="flex items-center text-sm text-gray-500">
-                                            <i class="lni lni-map-marker mr-2"></i>
-                                            Hent når det passer deg
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Rema 1000 Tvedtsenteret</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-map-marker mr-2"></i>
+                                                        0.8 km unna
+                                                    </div>
+                                                </div>
+                                                <div class="text-right min-w-[80px] flex items-center justify-end">
+                                                    <span class="font-medium text-gray-800">65 kr</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div @click="selectDelivery()" class="flex items-center p-3 border border-gray-200 rounded-xl hover:border-accent/20 hover:bg-accent/5 cursor-pointer hover:shadow-md transition-all duration-300">
+                                    <div class="flex items-center flex-1">
+                                        <div class="w-10 h-10 bg-white rounded-lg shadow-sm p-2 mr-3 flex-shrink-0 flex items-center justify-center">
+                                            <i class="lni lni-package text-accent text-2xl"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-center">
+                                                <div>
+                                                    <span class="font-medium text-gray-800">Pakkeboks Kiwi Forus</span>
+                                                    <div class="flex items-center text-sm text-gray-500">
+                                                        <i class="lni lni-map-marker mr-2"></i>
+                                                        1.2 km unna
+                                                    </div>
+                                                </div>
+                                                <div class="text-right min-w-[80px] flex items-center justify-end">
+                                                    <span class="font-medium text-gray-800">49 kr</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1082,80 +1478,83 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300">
-        <div class="container mx-auto px-4 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                <!-- Company Info -->
-                <div class="col-span-1 md:col-span-4">
-                    <div class="flex items-center mb-4">
-                        <span class="text-white font-semibold text-xl">FraktValg</span>
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-12 gap-8">
+                <!-- Logo and Description -->
+                <div class="col-span-12 md:col-span-4 lg:col-span-3">
+                    <div class="mb-4 h-8">
+                        <img src="https://wordpress-1207816-4888268.cloudwaysapps.com/wp-content/uploads/2023/09/Asset-1.svg" 
+                             alt="FraktValg" 
+                             class="h-full w-auto brightness-0 invert">
                     </div>
-                    <p class="text-gray-400 mb-6">Vi gjør frakt enkelt for norske nettbutikker. Integrer med Posten, Bring, PostNord og Helt Hjem i én enkel løsning.</p>
+                    <p class="text-gray-400 text-sm mt-4 mb-6">
+                        Norges mest fleksible fraktløsning for WooCommerce. Vi forenkler frakthåndtering for nettbutikker med sømløs integrasjon mot ledende transportører.
+                    </p>
                     <div class="flex space-x-4">
                         <a href="#" class="text-gray-400 hover:text-white transition-colors">
                             <i class="lni lni-facebook-filled text-xl"></i>
                         </a>
                         <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="lni lni-instagram-original text-xl"></i>
-                        </a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
                             <i class="lni lni-linkedin-original text-xl"></i>
                         </a>
                         <a href="#" class="text-gray-400 hover:text-white transition-colors">
-                            <i class="lni lni-tiktok text-xl"></i>
+                            <i class="lni lni-instagram-original text-xl"></i>
                         </a>
                     </div>
                 </div>
 
-                <!-- Product -->
-                <div class="col-span-1 md:col-span-2">
-                    <h4 class="text-white font-semibold mb-4">Produkt</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Funksjoner</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Priser</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Demo</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API</a></li>
+                <!-- Quick Links -->
+                <div class="col-span-6 md:col-span-4 lg:col-span-2">
+                    <h4 class="font-medium text-lg mb-4">Produkt</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Funksjoner</a></li>
+                        <li><a href="#integrations" class="text-gray-400 hover:text-white transition-colors">Integrasjoner</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white transition-colors">Priser</a></li>
+                        <li><a href="#demo" class="text-gray-400 hover:text-white transition-colors">Be om demo</a></li>
+                        <li><a href="#api" class="text-gray-400 hover:text-white transition-colors">API</a></li>
                     </ul>
                 </div>
 
                 <!-- Support -->
-                <div class="col-span-1 md:col-span-2">
-                    <h4 class="text-white font-semibold mb-4">Support</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Dokumentasjon</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Kom i gang</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Status</a></li>
+                <div class="col-span-6 md:col-span-4 lg:col-span-2">
+                    <h4 class="font-medium text-lg mb-4">Support</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#support" class="text-gray-400 hover:text-white transition-colors">Kundesenter</a></li>
+                        <li><a href="#docs" class="text-gray-400 hover:text-white transition-colors">Dokumentasjon</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-white transition-colors">Vanlige spørsmål</a></li>
+                        <li><a href="#status" class="text-gray-400 hover:text-white transition-colors">Status</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors">Kontakt oss</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources -->
+                <div class="col-span-6 md:col-span-4 lg:col-span-2">
+                    <h4 class="font-medium text-lg mb-4">Ressurser</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#blog" class="text-gray-400 hover:text-white transition-colors">Blogg</a></li>
+                        <li><a href="#guides" class="text-gray-400 hover:text-white transition-colors">Guider</a></li>
+                        <li><a href="#webinars" class="text-gray-400 hover:text-white transition-colors">Webinarer</a></li>
+                        <li><a href="#partners" class="text-gray-400 hover:text-white transition-colors">Partnere</a></li>
                     </ul>
                 </div>
 
                 <!-- Contact -->
-                <div class="col-span-1 md:col-span-2">
-                    <h4 class="text-white font-semibold mb-4">Kontakt</h4>
-                    <ul class="space-y-2">
-                        <li class="flex items-center">
-                            <i class="lni lni-envelope mr-2"></i>
-                            <a href="mailto:kontakt@fraktvalg.no" class="text-gray-400 hover:text-white transition-colors">kontakt@fraktvalg.no</a>
+                <div class="col-span-6 md:col-span-4 lg:col-span-3">
+                    <h4 class="font-medium text-lg mb-4">Kontakt</h4>
+                    <ul class="space-y-3">
+                        <li class="flex items-center space-x-3">
+                            <i class="lni lni-envelope text-primary"></i>
+                            <span class="text-gray-400">support@fraktvalg.no</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="lni lni-phone mr-2"></i>
-                            <a href="tel:+4712345678" class="text-gray-400 hover:text-white transition-colors">+47 123 45 678</a>
+                        <li class="flex items-center space-x-3">
+                            <i class="lni lni-phone text-primary"></i>
+                            <span class="text-gray-400">+47 400 00 000</span>
                         </li>
-                        <li class="flex items-center">
-                            <i class="lni lni-map-marker mr-2"></i>
+                        <li class="flex items-center space-x-3">
+                            <i class="lni lni-map-marker text-primary"></i>
                             <span class="text-gray-400">Oslo, Norge</span>
                         </li>
-                    </ul>
-                </div>
-
-                <!-- Legal -->
-                <div class="col-span-1 md:col-span-2">
-                    <h4 class="text-white font-semibold mb-4">Juridisk</h4>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Personvern</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Vilkår</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Cookies</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">GDPR</a></li>
                     </ul>
                 </div>
             </div>
@@ -1163,9 +1562,12 @@
             <!-- Bottom Bar -->
             <div class="border-t border-gray-800 mt-12 pt-8">
                 <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-400 text-sm mb-4 md:mb-0">&copy; 2024 FraktValg. Alle rettigheter reservert.</p>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-gray-400 text-sm">Et produkt av <a href="https://www.varvo.no" class="text-gray-400 hover:text-white transition-colors">VARVO AS</a></span>
+                    <p class="text-gray-400 text-sm mb-4 md:mb-0">&copy; 2023 FraktValg. Alle rettigheter reservert.</p>
+                    <div class="flex items-center space-x-6">
+                        <a href="#privacy" class="text-gray-400 hover:text-white text-sm transition-colors">Personvern</a>
+                        <a href="#terms" class="text-gray-400 hover:text-white text-sm transition-colors">Vilkår</a>
+                        <a href="#cookies" class="text-gray-400 hover:text-white text-sm transition-colors">Cookies</a>
+                        <span class="text-gray-400 text-sm">Et produkt fra <a href="#" class="text-white hover:text-primary transition-colors">VARVO AS</a></span>
                     </div>
                 </div>
             </div>
@@ -1271,6 +1673,41 @@
         }
         .animate-fade-in-up {
             animation: fade-in-up 0.7s ease-out forwards;
+        }
+
+        :root {
+            --color-primary: #1a365d;
+            --color-accent: #10b981;  /* Vibrant emerald green */
+            --color-accent-dark: #059669;  /* Slightly darker green for hover */
+        }
+
+        .bg-accent {
+            background-color: var(--color-accent);
+        }
+        .bg-accent-dark {
+            background-color: var(--color-accent-dark);
+        }
+        .text-accent {
+            color: var(--color-accent);
+        }
+        .hover\:bg-accent-dark:hover {
+            background-color: var(--color-accent-dark);
+        }
+        .hover\:text-accent:hover {
+            color: var(--color-accent);
+        }
+        .border-accent {
+            border-color: var(--color-accent);
+        }
+
+        .btn-gradient {
+            background-image: linear-gradient(to right, var(--color-accent), #0ea5e9, var(--color-accent));
+            background-size: 200% auto;
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            background-position: right center;
+            box-shadow: 0 10px 20px -10px var(--color-accent);
         }
     </style>
 </body>
